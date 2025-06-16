@@ -143,28 +143,18 @@ def show_research_sidebar():
             st.metric("Memory", "Unknown")
 
         # Model management buttons
-        col2 = st.columns(1)
-
         
+    
 
         with col2:
-            if st.button("🗑️ Unload All Models", key="unload_all_models"):
-                import gc
-                
-                # Clear all model-related session state
-                keys_to_remove = [key for key in st.session_state.keys() if 'model' in key or 'processor' in key]
-                for key in keys_to_remove:
-                    del st.session_state[key]
-                
-                # Clear ALL Streamlit caches
+            if st.button("🔄 Force Restart", key="force_restart"):
                 st.cache_data.clear()
                 st.cache_resource.clear()
-                
-                # Force garbage collection
-                gc.collect()
-                
-                st.success("🗑️ All models unloaded from memory")
-                st.info("💡 Refresh the page if models still appear loaded")
+                # Clear specific processor states
+                for key in list(st.session_state.keys()):
+                    if 'processor' in key or 'model' in key:
+                        del st.session_state[key]
+                st.success("🔄 Forced restart - refresh page")
                 st.rerun()
 
         
